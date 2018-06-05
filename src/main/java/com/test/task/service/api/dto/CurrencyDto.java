@@ -1,6 +1,5 @@
 package com.test.task.service.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
@@ -9,7 +8,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class Valute {
+public class CurrencyDto {
 
     @JacksonXmlProperty(localName = "ID", isAttribute = true)
     private String id;

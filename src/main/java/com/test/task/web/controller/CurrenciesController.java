@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.test.task.common.domain.systemDictionaries.web.Urls;
 import com.test.task.service.api.currency.CurrencyService;
-import com.test.task.service.api.dto.ValCurs;
+import com.test.task.service.api.dto.CurrencyBundleDto;
 
 @RestController
 @RequestMapping(path = Urls.Currencies.FULL)
@@ -17,7 +17,7 @@ public class CurrenciesController {
     CurrencyService currencyService;
 
     @GetMapping
-    public ValCurs releaseCurrencies() {
+    public CurrencyBundleDto releaseCurrencies() {
         return currencyService.releaseCurrentCurrency();
     }
 }

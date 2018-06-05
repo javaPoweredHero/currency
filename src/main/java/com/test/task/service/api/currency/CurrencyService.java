@@ -1,8 +1,8 @@
 package com.test.task.service.api.currency;
 
-import com.test.task.service.api.dto.ValCurs;
+import com.test.task.service.api.dto.CurrencyBundleDto;
 
 public interface CurrencyService {
 
-    ValCurs releaseCurrentCurrency();
+    CurrencyBundleDto releaseCurrentCurrency();
 }
