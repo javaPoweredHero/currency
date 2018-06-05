@@ -1,0 +1,18 @@
+spring:
+  profiles:
+      active: prod
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: create
+      use-new-id-generator-mappings: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://rusfinance-backend.simbirsoft/carcollection-dev-test
+    username: postgres
+    password: postgres
+  jackson.serialization:
+      WRITE_DATES_AS_TIMESTAMPS: false
+      indent_output: true # pretty print
+
+
