@@ -1,19 +1,29 @@
 spring:
-  profiles:
-      active: prod
+  profiles: prod
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://lodfsalhost:8080/jkhk
+    username: postgres
+    password: postgres
+---
+spring:
+  profiles: dev
+  datasource:
+    driver-class-name: org.hsqldb.jdbcDriver
+    url: jdbc:hsqldb:mem:dataSource
+    username: postgres
+    password: postgres
+
+spring:
   jpa:
     open-in-view: false
     hibernate:
       ddl-auto: create
       use-new-id-generator-mappings: true
-  datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:8080/test
-    username: postgres
-    password: postgres
   jackson.serialization:
       WRITE_DATES_AS_TIMESTAMPS: false
       indent_output: true # pretty print
+
 test-app:
-  currency-sort-order: GBP,AMD,AZN,CZK,USD, ASDFAF
+  currency-sort-order: GBP,AMD,AZN,CZK,USD
 
