@@ -26,6 +26,7 @@ import org.springframework.util.CollectionUtils;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.test.task.common.domain.systemDictionaries.currency.DatasourceFormat;
 import com.test.task.common.domain.systemDictionaries.currency.DatasourceUrl;
+import com.test.task.common.exceptions.currency.CurrencyDataReceivingException;
 import com.test.task.common.exceptions.currency.CurrencyDynamicMappingException;
 import com.test.task.common.exceptions.currency.CurrencyMappingException;
 import com.test.task.domain.currency.CurrencyRecord;
@@ -89,7 +90,8 @@ public class CurrencyServiceImpl implements CurrencyService {
             CurrencyBundleDto currencyBundleDto = releaseCurrency(date);
             currencyRepository.saveAll(currencyBundleDto.getCurrencyDtoList()
                     .stream()
-                    .map(currencyMapper::fromDto).collect(Collectors.toList()));
+                    .map(item -> currencyMapper.fromDto(item).setDate(date))
+                    .collect(Collectors.toList()));
             currencyBundleDto.getCurrencyDtoList().removeIf(dto -> !requiredList.contains(dto.getCharCode()));
             return currencyBundleDto;
         } else {
@@ -97,7 +99,8 @@ public class CurrencyServiceImpl implements CurrencyService {
                     .filter(item -> requiredList.contains(item.getCharCode()))
                     .collect(Collectors.toSet());
             if (!CollectionUtils.isEmpty(relevantDbRecords) && relevantDbRecords.size() == dbRecords.size()) {
-                return new CurrencyBundleDto().setDate(date.toString())
+                return new CurrencyBundleDto()
+                        .setDate(date.format(DateTimeFormatter.ofPattern(DatasourceFormat.CURRENCY_DATE_FORMAT)))
                         .setName(DatasourceFormat.CURRENCY_MARKET)
                         .setCurrencyDtoList(relevantDbRecords.stream().map(currencyMapper::toDto)
                                 .collect(Collectors.toList()));
@@ -105,7 +108,7 @@ public class CurrencyServiceImpl implements CurrencyService {
                 CurrencyBundleDto currencyBundleDto = releaseCurrency(date);
                 currencyRepository.saveAll(currencyBundleDto
                         .getCurrencyDtoList().stream()
-                        .map(currencyMapper::fromDto)
+                        .map(item -> currencyMapper.fromDto(item).setDate(date))
                         .filter(dbRecords::contains)
                         .collect(Collectors.toList()));
                 currencyBundleDto.getCurrencyDtoList().removeIf(dto -> !requiredList.contains(dto.getCharCode()));
@@ -132,7 +135,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     private CurrencyBundleDto sortCurrencies(CurrencyBundleDto dtoBundle) {
         if (Objects.isNull(dtoBundle) || CollectionUtils.isEmpty(dtoBundle.getCurrencyDtoList())) {
-            return null;
+            throw new CurrencyDataReceivingException();
         }
 
         dtoBundle.getCurrencyDtoList().sort((left, right) -> {

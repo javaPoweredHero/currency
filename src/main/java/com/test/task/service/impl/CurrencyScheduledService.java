@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import com.test.task.common.exceptions.currency.CurrencyDataReceivingException;
 import com.test.task.domain.currency.CurrencyRecord;
 import com.test.task.domain.repository.CurrencyRepository;
 import com.test.task.service.api.currency.CurrencyService;
@@ -31,17 +32,21 @@ public class CurrencyScheduledService {
     public void loadCurrenciesDataJob() {
         LocalDate date = LocalDate.now();
         Set<CurrencyRecord> currencyDbList = currencyRepository.findAllByDate(date);
-        Set<CurrencyRecord> currencyBankList = currencyService.releaseCurrency(LocalDate.now()).getCurrencyDtoList()
-                .stream()
-                .map(mapper::fromDto)
-                .collect(Collectors.toSet());
-        if (!CollectionUtils.isEmpty(currencyDbList)) {
-            currencyRepository.saveAll(currencyBankList
+        try {
+            Set<CurrencyRecord> currencyBankList = currencyService.releaseCurrency(LocalDate.now()).getCurrencyDtoList()
                     .stream()
-                    .filter(item -> !currencyDbList.contains(item))
-                    .collect(Collectors.toSet()));
-        } else {
-            currencyRepository.saveAll(currencyBankList);
+                    .map(mapper::fromDto)
+                    .collect(Collectors.toSet());
+            if (!CollectionUtils.isEmpty(currencyDbList)) {
+                currencyRepository.saveAll(currencyBankList
+                        .stream()
+                        .filter(item -> !currencyDbList.contains(item))
+                        .collect(Collectors.toSet()));
+            } else {
+                currencyRepository.saveAll(currencyBankList);
+            }
+        } catch (CurrencyDataReceivingException e) {
+            log.error("scheduled service failure");
         }
     }
 }
