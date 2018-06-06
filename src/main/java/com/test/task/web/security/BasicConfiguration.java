@@ -1,5 +1,6 @@
 package com.test.task.web.security;
 
+import com.test.task.common.systemDictionaries.roles.UserRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,8 +11,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-
-import com.test.task.common.domain.enums.UserRoles;
 
 @Configuration
 public class BasicConfiguration extends WebSecurityConfigurerAdapter {
@@ -28,9 +27,9 @@ public class BasicConfiguration extends WebSecurityConfigurerAdapter {
     public UserDetailsService userDetailsService() {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
         manager.createUser(User.withUsername("user").password(passwordEncoder().encode("user"))
-                .roles(UserRoles.USER.getName()).build());
+                .roles(UserRoles.USER).build());
         manager.createUser(User.withUsername("admin").password(passwordEncoder().encode("admin"))
-                .roles(UserRoles.USER.getName(), UserRoles.ADMIN.getName()).build());
+                .roles(UserRoles.USER, UserRoles.ADMIN).build());
         return manager;
     }
 

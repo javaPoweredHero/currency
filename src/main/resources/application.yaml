@@ -12,6 +12,9 @@ spring:
 logging:
   level:
     org.hibernate.engine.jdbc.env.internal.LobCreatorBuilderImpl: ERROR
+
+test-app:
+  currency-sort-order: GBP,AMD,AZN,CZK,USD
 ---
 spring:
   profiles: dev
@@ -30,6 +33,4 @@ spring:
     username: postgres
     password: postgres
 
-test-app:
-  currency-sort-order: GBP,AMD,AZN,CZK,USD
 

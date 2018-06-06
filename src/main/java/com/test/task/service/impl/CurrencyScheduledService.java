@@ -31,19 +31,18 @@ public class CurrencyScheduledService {
     @Transactional
     public void loadCurrenciesDataJob() {
         LocalDate date = LocalDate.now();
-        Set<CurrencyRecord> currencyDbList = currencyRepository.findAllByDate(date);
+        Set<CurrencyRecord> currencyDbSet = currencyRepository.findAllByDate(date);
         try {
-            Set<CurrencyRecord> currencyBankList = currencyService.releaseCurrency(LocalDate.now()).getCurrencyDtoList()
+            Set<CurrencyRecord> currencyBankSet =
+                    currencyService.releaseCurrencyBundle(date).getCurrencyDtoList()
                     .stream()
                     .map(mapper::fromDto)
                     .collect(Collectors.toSet());
-            if (!CollectionUtils.isEmpty(currencyDbList)) {
-                currencyRepository.saveAll(currencyBankList
-                        .stream()
-                        .filter(item -> !currencyDbList.contains(item))
-                        .collect(Collectors.toSet()));
+            if (!CollectionUtils.isEmpty(currencyDbSet)) {
+                currencyBankSet.removeAll(currencyDbSet);
+                currencyRepository.saveAll(currencyBankSet);
             } else {
-                currencyRepository.saveAll(currencyBankList);
+                currencyRepository.saveAll(currencyBankSet);
             }
         } catch (CurrencyDataReceivingException e) {
             log.error("scheduled service failure");

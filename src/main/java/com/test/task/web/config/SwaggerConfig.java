@@ -2,6 +2,8 @@ package com.test.task.web.config;
 
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.context.annotation.Bean;
@@ -14,6 +16,8 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.service.BasicAuth;
+import springfox.documentation.service.SecurityScheme;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -29,7 +33,8 @@ public class SwaggerConfig extends WebMvcConfigurationSupport {
                 .apis(RequestHandlerSelectors.basePackage("com.test.task.web.controller"))
                 .build()
                 .enableUrlTemplating(false)
-                .useDefaultResponseMessages(false);
+                .useDefaultResponseMessages(false)
+                .securitySchemes(Collections.singletonList(new BasicAuth("basicAuth")));
     }
 
     @Override

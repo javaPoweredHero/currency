@@ -8,9 +8,9 @@ import com.test.task.service.api.dto.CurrencyDynamicBundleDto;
 
 public interface CurrencyService {
 
-    CurrencyBundleDto releaseCurrency(LocalDate date);
+    CurrencyBundleDto releaseCurrencyBundle(LocalDate date);
 
-    CurrencyDynamicBundleDto releaseCurrencyDynamic(LocalDate startDate, LocalDate endDate, String currencyId);
+    CurrencyDynamicBundleDto releaseCurrencyDynamics(LocalDate startDate, LocalDate endDate, String currencyId);
 
     CurrencyBundleDto releaseCurrencyRequiredList(List<String> requiredList, LocalDate date);
 }

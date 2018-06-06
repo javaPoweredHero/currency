@@ -1,4 +1,4 @@
-package com.test.task.common.domain.systemDictionaries.web;
+package com.test.task.common.systemDictionaries.web;
 
 public interface Urls {
     String ROOT = "api/v1/";

@@ -1,4 +1,4 @@
-package com.test.task.common.domain.systemDictionaries.currency;
+package com.test.task.common.systemDictionaries.currency;
 
 public interface DatasourceUrl {
 

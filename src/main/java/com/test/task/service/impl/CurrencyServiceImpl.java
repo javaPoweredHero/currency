@@ -24,8 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.test.task.common.domain.systemDictionaries.currency.DatasourceFormat;
-import com.test.task.common.domain.systemDictionaries.currency.DatasourceUrl;
+import com.test.task.common.systemDictionaries.currency.DatasourceFormat;
+import com.test.task.common.systemDictionaries.currency.DatasourceUrl;
 import com.test.task.common.exceptions.currency.CurrencyDataReceivingException;
 import com.test.task.common.exceptions.currency.CurrencyDynamicMappingException;
 import com.test.task.common.exceptions.currency.CurrencyMappingException;
@@ -51,7 +51,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     private XmlMapper xmlMapper = new XmlMapper();
 
     @Override
-    public CurrencyBundleDto releaseCurrency(LocalDate date) {
+    public CurrencyBundleDto releaseCurrencyBundle(LocalDate date) {
         String requestUrl = String.format(DatasourceUrl.Currencies.FULL, date
                 .format(DateTimeFormatter.ofPattern(DatasourceFormat.CURRENCY_DATE_FORMAT)));
         Charset charset = resolveXmlEncoding(requestUrl);
@@ -66,7 +66,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
-    public CurrencyDynamicBundleDto releaseCurrencyDynamic(LocalDate startDate, LocalDate endDate, String currencyId) {
+    public CurrencyDynamicBundleDto releaseCurrencyDynamics(LocalDate startDate, LocalDate endDate, String currencyId) {
         String requestUrl = String.format(DatasourceUrl.CurrencyDynamic.FULL,
                 startDate.format(DateTimeFormatter.ofPattern(DatasourceFormat.CURRENCY_DATE_FORMAT)),
                 endDate.format(DateTimeFormatter.ofPattern(DatasourceFormat.CURRENCY_DATE_FORMAT)),
@@ -87,7 +87,7 @@ public class CurrencyServiceImpl implements CurrencyService {
     public CurrencyBundleDto releaseCurrencyRequiredList(List<String> requiredList, LocalDate date) {
         Set<CurrencyRecord> dbRecords = currencyRepository.findAllByDate(date);
         if (CollectionUtils.isEmpty(dbRecords)) {
-            CurrencyBundleDto currencyBundleDto = releaseCurrency(date);
+            CurrencyBundleDto currencyBundleDto = releaseCurrencyBundle(date);
             currencyRepository.saveAll(currencyBundleDto.getCurrencyDtoList()
                     .stream()
                     .map(item -> currencyMapper.fromDto(item).setDate(date))
@@ -105,11 +105,11 @@ public class CurrencyServiceImpl implements CurrencyService {
                         .setCurrencyDtoList(relevantDbRecords.stream().map(currencyMapper::toDto)
                                 .collect(Collectors.toList()));
             } else {
-                CurrencyBundleDto currencyBundleDto = releaseCurrency(date);
+                CurrencyBundleDto currencyBundleDto = releaseCurrencyBundle(date);
                 currencyRepository.saveAll(currencyBundleDto
                         .getCurrencyDtoList().stream()
                         .map(item -> currencyMapper.fromDto(item).setDate(date))
-                        .filter(dbRecords::contains)
+                        .filter(item -> !dbRecords.contains(item))
                         .collect(Collectors.toList()));
                 currencyBundleDto.getCurrencyDtoList().removeIf(dto -> !requiredList.contains(dto.getCharCode()));
                 return currencyBundleDto;
