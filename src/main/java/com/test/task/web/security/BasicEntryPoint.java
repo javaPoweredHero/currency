@@ -21,7 +21,7 @@ public class BasicEntryPoint extends BasicAuthenticationEntryPoint {
 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException ex)
-            throws IOException, ServletException {
+            throws IOException {
         writer.writeException(ex, HttpStatus.UNAUTHORIZED, response);
     }
 

@@ -33,7 +33,7 @@ public class CurrenciesController {
     }
 
     @GetMapping(Urls.Currencies.Dynamic.PART)
-    @ApiOperation(value = "Currency dynamic api")
+    @ApiOperation(value = "Currency dynamics api")
     public CurrencyDynamicBundleDto getCurrenciesDynamics(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
@@ -42,7 +42,7 @@ public class CurrenciesController {
     }
 
     @GetMapping(Urls.Currencies.Custom.PART)
-    @ApiOperation(value = "Custom currency request")
+    @ApiOperation(value = "Custom currency request based on params")
     public CurrencyBundleDto getCurrenciesList(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam List<String> currenciesList) {
