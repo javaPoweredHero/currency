@@ -33,7 +33,7 @@ dependencies {
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	testCompile('org.springframework.security:spring-security-test')
-
+	compile group: 'org.postgresql', name: 'postgresql', version: '42.2.2'
 	compile ('com.google.guava:guava:21.0')
 	compile 'org.mapstruct:mapstruct-jdk8:1.2.0.Final'
 	compile 'org.mapstruct:mapstruct-processor:1.2.0.Final'

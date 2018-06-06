@@ -13,6 +13,7 @@ import lombok.experimental.Accessors;
 @Accessors(chain = true)
 @JacksonXmlRootElement(localName = "ValCurs")
 public class CurrencyBundleDto {
+
     @JacksonXmlProperty(localName = "Date", isAttribute = true)
     String date;
     @JacksonXmlProperty(localName = "name", isAttribute = true)

@@ -2,7 +2,6 @@ package com.test.task.service.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
-
 import lombok.Data;
 import lombok.experimental.Accessors;
 
