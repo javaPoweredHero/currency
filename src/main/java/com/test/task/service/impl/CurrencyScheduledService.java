@@ -35,9 +35,9 @@ public class CurrencyScheduledService {
         try {
             Set<CurrencyRecord> currencyBankSet =
                     currencyService.releaseCurrencyBundle(date).getCurrencyDtoList()
-                    .stream()
-                    .map(mapper::fromDto)
-                    .collect(Collectors.toSet());
+                            .stream()
+                            .map(mapper::fromDto)
+                            .collect(Collectors.toSet());
             if (!CollectionUtils.isEmpty(currencyDbSet)) {
                 currencyBankSet.removeAll(currencyDbSet);
             }

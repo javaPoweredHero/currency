@@ -1,6 +1,8 @@
 package com.test.task.web.security;
 
 import com.test.task.common.systemDictionaries.roles.UserRoles;
+import com.test.task.common.systemDictionaries.web.Urls;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,9 +31,9 @@ public class BasicConfiguration extends WebSecurityConfigurerAdapter {
     public UserDetailsService userDetailsService() {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
         manager.createUser(User.withUsername("user").password(passwordEncoder().encode("user"))
-                .authorities(UserRoles.USER).build());
+                .roles(UserRoles.USER).build());
         manager.createUser(User.withUsername("admin").password(passwordEncoder().encode("admin"))
-                .authorities(UserRoles.USER, UserRoles.ADMIN).build());
+                .roles(UserRoles.USER, UserRoles.ADMIN).build());
         return manager;
     }
 
@@ -42,8 +44,9 @@ public class BasicConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers("/v2/*", "/swagger/**", "/webjars/**", "/swagger-resources/**",
                         "/swagger-ui.html**")
                 .permitAll()
+                .antMatchers(Urls.Currencies.Custom.FULL).hasRole(UserRoles.ADMIN)
                 .anyRequest()
-                .authenticated().antMatchers("/api/v1/**").hasAuthority("ADMIN")
+                .authenticated()
                 .and()
                 .httpBasic()
                 .authenticationEntryPoint(basicEntryPoint);

@@ -1,21 +1,22 @@
 package com.test.task.web.controller;
 
-import com.test.task.common.systemDictionaries.web.Urls;
-import com.test.task.service.api.currency.CurrencyService;
-import com.test.task.service.api.dto.CurrencyBundleDto;
-import com.test.task.service.api.dto.CurrencyDynamicBundleDto;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import java.time.LocalDate;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
-import java.util.List;
+import com.test.task.common.systemDictionaries.web.Urls;
+import com.test.task.service.api.currency.CurrencyService;
+import com.test.task.service.api.dto.CurrencyBundleDto;
+import com.test.task.service.api.dto.CurrencyDynamicBundleDto;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 
 @Api(tags = "Currency", description = "Api provides operations with currencies. All dates in ISO format")
 @RequestMapping(path = Urls.Currencies.FULL)
@@ -40,7 +41,6 @@ public class CurrenciesController {
         return currencyService.releaseCurrencyDynamics(startDate, endDate, currencyId);
     }
 
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(Urls.Currencies.Custom.PART)
     @ApiOperation(value = "Custom currency request")
     public CurrencyBundleDto getCurrenciesList(
