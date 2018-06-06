@@ -11,7 +11,7 @@ import lombok.experimental.Accessors;
 public class CurrencyDto {
 
     @JacksonXmlProperty(localName = "ID", isAttribute = true)
-    private String id;
+    private String currencyId;
     @JacksonXmlProperty(localName = "NumCode")
     private int numCode;
     @JacksonXmlProperty(localName = "CharCode")
@@ -19,7 +19,7 @@ public class CurrencyDto {
     @JacksonXmlProperty(localName = "Nominal")
     private int nominal;
     @JacksonXmlProperty(localName = "Name")
-    private String Name;
+    private String name;
     @JacksonXmlProperty(localName = "Value")
     private Double value;
 

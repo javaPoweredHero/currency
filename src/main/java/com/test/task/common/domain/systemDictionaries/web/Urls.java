@@ -14,5 +14,9 @@ public interface Urls {
             String END_DATE_PARAM = "endDate";
             String CURRENCY_ID_PARAM = "currencyId";
         }
+
+        interface Custom {
+            String PART = "custom";;
+        }
     }
 }

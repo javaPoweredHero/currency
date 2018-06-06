@@ -9,6 +9,10 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -16,15 +20,20 @@ import javax.xml.stream.XMLStreamReader;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.test.task.common.domain.systemDictionaries.currency.DatasourceFormat;
 import com.test.task.common.domain.systemDictionaries.currency.DatasourceUrl;
 import com.test.task.common.exceptions.currency.CurrencyDynamicMappingException;
 import com.test.task.common.exceptions.currency.CurrencyMappingException;
+import com.test.task.domain.currency.CurrencyRecord;
+import com.test.task.domain.repository.CurrencyRepository;
 import com.test.task.service.api.currency.CurrencyService;
 import com.test.task.service.api.dto.CurrencyBundleDto;
 import com.test.task.service.api.dto.CurrencyDynamicBundleDto;
+import com.test.task.service.impl.mapper.CurrencyMapper;
 import com.test.task.web.config.ApplicationProperties;
 
 import lombok.RequiredArgsConstructor;
@@ -36,11 +45,13 @@ import lombok.extern.slf4j.Slf4j;
 public class CurrencyServiceImpl implements CurrencyService {
 
     private final ApplicationProperties properties;
+    private final CurrencyRepository currencyRepository;
+    private final CurrencyMapper currencyMapper;
     private XmlMapper xmlMapper = new XmlMapper();
 
     @Override
-    public CurrencyBundleDto releaseCurrentCurrency() {
-        String requestUrl = String.format(DatasourceUrl.Currencies.FULL, LocalDate.now()
+    public CurrencyBundleDto releaseCurrency(LocalDate date) {
+        String requestUrl = String.format(DatasourceUrl.Currencies.FULL, date
                 .format(DateTimeFormatter.ofPattern(DatasourceFormat.CURRENCY_DATE_FORMAT)));
         Charset charset = resolveXmlEncoding(requestUrl);
 
@@ -70,6 +81,39 @@ public class CurrencyServiceImpl implements CurrencyService {
         }
     }
 
+    @Override
+    @Transactional
+    public CurrencyBundleDto releaseCurrencyRequiredList(List<String> requiredList, LocalDate date) {
+        Set<CurrencyRecord> dbRecords = currencyRepository.findAllByDate(date);
+        if (CollectionUtils.isEmpty(dbRecords)) {
+            CurrencyBundleDto currencyBundleDto = releaseCurrency(date);
+            currencyRepository.saveAll(currencyBundleDto.getCurrencyDtoList()
+                    .stream()
+                    .map(currencyMapper::fromDto).collect(Collectors.toList()));
+            currencyBundleDto.getCurrencyDtoList().removeIf(dto -> !requiredList.contains(dto.getCharCode()));
+            return currencyBundleDto;
+        } else {
+            Set<CurrencyRecord> relevantDbRecords = dbRecords.stream()
+                    .filter(item -> requiredList.contains(item.getCharCode()))
+                    .collect(Collectors.toSet());
+            if (!CollectionUtils.isEmpty(relevantDbRecords) && relevantDbRecords.size() == dbRecords.size()) {
+                return new CurrencyBundleDto().setDate(date.toString())
+                        .setName(DatasourceFormat.CURRENCY_MARKET)
+                        .setCurrencyDtoList(relevantDbRecords.stream().map(currencyMapper::toDto)
+                                .collect(Collectors.toList()));
+            } else {
+                CurrencyBundleDto currencyBundleDto = releaseCurrency(date);
+                currencyRepository.saveAll(currencyBundleDto
+                        .getCurrencyDtoList().stream()
+                        .map(currencyMapper::fromDto)
+                        .filter(dbRecords::contains)
+                        .collect(Collectors.toList()));
+                currencyBundleDto.getCurrencyDtoList().removeIf(dto -> !requiredList.contains(dto.getCharCode()));
+                return currencyBundleDto;
+            }
+        }
+    }
+
     private Charset resolveXmlEncoding(String url) {
         XMLInputFactory f = XMLInputFactory.newFactory();
 
@@ -87,6 +131,10 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     private CurrencyBundleDto sortCurrencies(CurrencyBundleDto dtoBundle) {
+        if (Objects.isNull(dtoBundle) || CollectionUtils.isEmpty(dtoBundle.getCurrencyDtoList())) {
+            return null;
+        }
+
         dtoBundle.getCurrencyDtoList().sort((left, right) -> {
             if (properties.getCurrencySortOrder().contains(left.getCharCode()) &&
                     properties.getCurrencySortOrder().contains(right.getCharCode())) {

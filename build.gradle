@@ -35,6 +35,8 @@ dependencies {
 	testCompile('org.springframework.security:spring-security-test')
 
 	compile ('com.google.guava:guava:21.0')
+	compile 'org.mapstruct:mapstruct-jdk8:1.2.0.Final'
+	compile 'org.mapstruct:mapstruct-processor:1.2.0.Final'
 	compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
 	compile group: 'commons-io', name: 'commons-io', version: '2.6'
 	compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.5.0'
