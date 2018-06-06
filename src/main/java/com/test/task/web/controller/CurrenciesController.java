@@ -6,7 +6,6 @@ import com.test.task.service.api.dto.CurrencyBundleDto;
 import com.test.task.service.api.dto.CurrencyDynamicBundleDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.util.List;
 
-@Api(tags = "Currency", description = "Api provides operations with currencies")
+@Api(tags = "Currency", description = "Api provides operations with currencies. All dates in ISO format")
 @RequestMapping(path = Urls.Currencies.FULL)
 @RestController
 public class CurrenciesController {
@@ -27,13 +26,13 @@ public class CurrenciesController {
     CurrencyService currencyService;
 
     @GetMapping()
-    @ApiOperation(value = "Current currencies api", authorizations = {@Authorization(value = "basicAuth")})
+    @ApiOperation(value = "Current currencies api")
     public CurrencyBundleDto getCurrentCurrencies() {
         return currencyService.releaseCurrencyBundle(LocalDate.now());
     }
 
     @GetMapping(Urls.Currencies.Dynamic.PART)
-    @ApiOperation(value = "Currency dynamic api", authorizations = {@Authorization(value = "basicAuth")})
+    @ApiOperation(value = "Currency dynamic api")
     public CurrencyDynamicBundleDto getCurrenciesDynamics(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
@@ -41,9 +40,9 @@ public class CurrenciesController {
         return currencyService.releaseCurrencyDynamics(startDate, endDate, currencyId);
     }
 
-    @PreAuthorize("hasRole(T(UserRoles).ADMIN)")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(Urls.Currencies.Custom.PART)
-    @ApiOperation(value = "Custom currency request", authorizations = {@Authorization(value = "basicAuth")})
+    @ApiOperation(value = "Custom currency request")
     public CurrencyBundleDto getCurrenciesList(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam List<String> currenciesList) {

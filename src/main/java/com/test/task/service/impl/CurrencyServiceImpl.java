@@ -1,5 +1,29 @@
 package com.test.task.service.impl;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import com.test.task.common.exceptions.currency.CurrencyDataReceivingException;
+import com.test.task.common.exceptions.currency.CurrencyDynamicMappingException;
+import com.test.task.common.exceptions.currency.CurrencyMappingException;
+import com.test.task.common.systemDictionaries.currency.DatasourceFormat;
+import com.test.task.common.systemDictionaries.currency.DatasourceUrl;
+import com.test.task.domain.currency.CurrencyRecord;
+import com.test.task.domain.repository.CurrencyRepository;
+import com.test.task.service.api.currency.CurrencyService;
+import com.test.task.service.api.dto.CurrencyBundleDto;
+import com.test.task.service.api.dto.CurrencyDynamicBundleDto;
+import com.test.task.service.impl.mapper.CurrencyMapper;
+import com.test.task.web.config.ApplicationProperties;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.mapstruct.ap.internal.util.Collections;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamReader;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,36 +33,11 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.xml.stream.XMLInputFactory;
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamReader;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
-
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import com.test.task.common.systemDictionaries.currency.DatasourceFormat;
-import com.test.task.common.systemDictionaries.currency.DatasourceUrl;
-import com.test.task.common.exceptions.currency.CurrencyDataReceivingException;
-import com.test.task.common.exceptions.currency.CurrencyDynamicMappingException;
-import com.test.task.common.exceptions.currency.CurrencyMappingException;
-import com.test.task.domain.currency.CurrencyRecord;
-import com.test.task.domain.repository.CurrencyRepository;
-import com.test.task.service.api.currency.CurrencyService;
-import com.test.task.service.api.dto.CurrencyBundleDto;
-import com.test.task.service.api.dto.CurrencyDynamicBundleDto;
-import com.test.task.service.impl.mapper.CurrencyMapper;
-import com.test.task.web.config.ApplicationProperties;
-
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @Service
@@ -98,13 +97,13 @@ public class CurrencyServiceImpl implements CurrencyService {
             Set<CurrencyRecord> relevantDbRecords = dbRecords.stream()
                     .filter(item -> requiredList.contains(item.getCharCode()))
                     .collect(Collectors.toSet());
-            if (!CollectionUtils.isEmpty(relevantDbRecords) && relevantDbRecords.size() == dbRecords.size()) {
+            if (!CollectionUtils.isEmpty(relevantDbRecords) && relevantDbRecords.size() == requiredList.size()) {
                 return new CurrencyBundleDto()
                         .setDate(date.format(DateTimeFormatter.ofPattern(DatasourceFormat.CURRENCY_DATE_FORMAT)))
                         .setName(DatasourceFormat.CURRENCY_MARKET)
-                        .setCurrencyDtoList(relevantDbRecords.stream().map(currencyMapper::toDto)
+                        .setCurrencyDtoList(dbRecords.stream().map(currencyMapper::toDto)
                                 .collect(Collectors.toList()));
-            } else {
+            } else { // not all present
                 CurrencyBundleDto currencyBundleDto = releaseCurrencyBundle(date);
                 currencyRepository.saveAll(currencyBundleDto
                         .getCurrencyDtoList().stream()

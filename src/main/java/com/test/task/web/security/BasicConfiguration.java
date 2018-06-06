@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 @Configuration
+@EnableWebSecurity
 public class BasicConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
@@ -27,9 +29,9 @@ public class BasicConfiguration extends WebSecurityConfigurerAdapter {
     public UserDetailsService userDetailsService() {
         InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
         manager.createUser(User.withUsername("user").password(passwordEncoder().encode("user"))
-                .roles(UserRoles.USER).build());
+                .authorities(UserRoles.USER).build());
         manager.createUser(User.withUsername("admin").password(passwordEncoder().encode("admin"))
-                .roles(UserRoles.USER, UserRoles.ADMIN).build());
+                .authorities(UserRoles.USER, UserRoles.ADMIN).build());
         return manager;
     }
 
@@ -41,7 +43,7 @@ public class BasicConfiguration extends WebSecurityConfigurerAdapter {
                         "/swagger-ui.html**")
                 .permitAll()
                 .anyRequest()
-                .authenticated()
+                .authenticated().antMatchers("/api/v1/**").hasAuthority("ADMIN")
                 .and()
                 .httpBasic()
                 .authenticationEntryPoint(basicEntryPoint);

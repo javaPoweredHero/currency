@@ -40,10 +40,8 @@ public class CurrencyScheduledService {
                     .collect(Collectors.toSet());
             if (!CollectionUtils.isEmpty(currencyDbSet)) {
                 currencyBankSet.removeAll(currencyDbSet);
-                currencyRepository.saveAll(currencyBankSet);
-            } else {
-                currencyRepository.saveAll(currencyBankSet);
             }
+            currencyRepository.saveAll(currencyBankSet);
         } catch (CurrencyDataReceivingException e) {
             log.error("scheduled service failure");
         }
