@@ -1,4 +1,4 @@
-package com.test.task.domain;
+package com.test.task.domain.currency;
 
 import lombok.Data;
 import lombok.experimental.Accessors;

@@ -8,18 +8,14 @@ import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
-public class CurrencyDto {
+public class CurrencyDynamicDto {
 
-    @JacksonXmlProperty(localName = "ID", isAttribute = true)
-    private String id;
-    @JacksonXmlProperty(localName = "NumCode")
-    private int numCode;
-    @JacksonXmlProperty(localName = "CharCode")
-    private String charCode;
+    @JacksonXmlProperty(localName = "Date", isAttribute = true)
+    private String date;
+    @JacksonXmlProperty(localName = "Id", isAttribute = true)
+    private String currencyId;
     @JacksonXmlProperty(localName = "Nominal")
     private int nominal;
-    @JacksonXmlProperty(localName = "Name")
-    private String Name;
     @JacksonXmlProperty(localName = "Value")
     private Double value;
 

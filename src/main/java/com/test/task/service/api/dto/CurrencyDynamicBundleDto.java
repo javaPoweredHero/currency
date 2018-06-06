@@ -12,12 +12,16 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @JacksonXmlRootElement(localName = "ValCurs")
-public class CurrencyBundleDto {
-    @JacksonXmlProperty(localName = "Date", isAttribute = true)
-    String date;
+public class CurrencyDynamicBundleDto {
+    @JacksonXmlProperty(localName = "ID", isAttribute = true)
+    private String currencyId;
+    @JacksonXmlProperty(localName = "DateRange1", isAttribute = true)
+    private String startDate;
+    @JacksonXmlProperty(localName = "DateRange2", isAttribute = true)
+    private String endDate;
     @JacksonXmlProperty(localName = "name", isAttribute = true)
     String name;
-    @JacksonXmlProperty(localName = "Valute")
+    @JacksonXmlProperty(localName = "Record")
     @JacksonXmlElementWrapper(useWrapping = false)
-    List<CurrencyDto> currencyDtoList;
+    List<CurrencyDynamicDto> currencyDynamicDtoList;
 }
