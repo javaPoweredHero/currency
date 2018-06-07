@@ -1,4 +1,4 @@
-package com.test.task.domain.currency;
+package com.test.task.dao.domain;
 
 import java.time.LocalDate;
 

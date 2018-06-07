@@ -42,7 +42,7 @@ public class CurrenciesController {
     }
 
     @GetMapping(Urls.Currencies.Custom.PART)
-    @ApiOperation(value = "Custom currency request based on params")
+    @ApiOperation(value = "Custom domain request based on params")
     public CurrencyBundleDto getCurrenciesList(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
             @RequestParam List<String> currenciesList) {

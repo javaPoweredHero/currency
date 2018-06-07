@@ -10,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 import com.test.task.common.exceptions.currency.CurrencyDataReceivingException;
-import com.test.task.domain.currency.CurrencyRecord;
-import com.test.task.domain.repository.CurrencyRepository;
+import com.test.task.dao.domain.CurrencyRecord;
+import com.test.task.dao.repository.CurrencyRepository;
 import com.test.task.service.api.currency.CurrencyService;
 import com.test.task.service.impl.mapper.CurrencyMapper;
 

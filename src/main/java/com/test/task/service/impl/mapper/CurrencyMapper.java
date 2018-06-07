@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
-import com.test.task.domain.currency.CurrencyRecord;
+import com.test.task.dao.domain.CurrencyRecord;
 import com.test.task.service.api.dto.CurrencyDto;
 
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
