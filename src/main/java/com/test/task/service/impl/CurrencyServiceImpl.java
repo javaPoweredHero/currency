@@ -102,7 +102,7 @@ public class CurrencyServiceImpl implements CurrencyService {
                 return new CurrencyBundleDto()
                         .setDate(date.format(DateTimeFormatter.ofPattern(DatasourceFormat.CURRENCY_DATE_FORMAT)))
                         .setName(DatasourceFormat.CURRENCY_MARKET)
-                        .setCurrencyDtoList(dbRecords.stream().map(currencyMapper::toDto)
+                        .setCurrencyDtoList(relevantDbRecords.stream().map(currencyMapper::toDto)
                                 .collect(Collectors.toList()));
             } else { // not all present
                 CurrencyBundleDto currencyBundleDto = releaseCurrencyBundle(date);
